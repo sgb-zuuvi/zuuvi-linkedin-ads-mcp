@@ -42,7 +42,9 @@ export class TokenStore {
         access_token: process.env.LINKEDIN_ACCESS_TOKEN || '',
         refresh_token: process.env.LINKEDIN_REFRESH_TOKEN,
         expires_in: 0,
-        expires_at: process.env.LINKEDIN_ACCESS_TOKEN ? Math.floor(Date.now() / 1000) + 3600 : 0,
+        expires_at: process.env.LINKEDIN_ACCESS_TOKEN
+          ? Number(process.env.LINKEDIN_ACCESS_TOKEN_EXPIRES_AT) || Math.floor(Date.now() / 1000) + 3600
+          : 0,
       } as unknown as LinkedInTokens;
     }
   }
