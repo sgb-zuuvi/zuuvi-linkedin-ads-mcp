@@ -17,8 +17,12 @@ export class TokenStore {
 
   private ensureDirectory(): void {
     const dir = path.dirname(this.tokenPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+    try {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+      }
+    } catch {
+      // read-only environment; tokens stay in memory
     }
   }
 
@@ -32,13 +36,26 @@ export class TokenStore {
       console.error('Failed to load tokens:', error);
       this.tokens = null;
     }
+    // Cloud/hosted use: seed from env when no token file exists
+    if (!this.tokens && process.env.LINKEDIN_REFRESH_TOKEN) {
+      this.tokens = {
+        access_token: process.env.LINKEDIN_ACCESS_TOKEN || '',
+        refresh_token: process.env.LINKEDIN_REFRESH_TOKEN,
+        expires_in: 0,
+        expires_at: process.env.LINKEDIN_ACCESS_TOKEN ? Math.floor(Date.now() / 1000) + 3600 : 0,
+      } as unknown as LinkedInTokens;
+    }
   }
 
   async saveTokens(tokens: LinkedInTokens): Promise<void> {
     this.tokens = tokens;
-    fs.writeFileSync(this.tokenPath, JSON.stringify(tokens, null, 2), {
-      mode: 0o600,
-    });
+    try {
+      fs.writeFileSync(this.tokenPath, JSON.stringify(tokens, null, 2), {
+        mode: 0o600,
+      });
+    } catch (error) {
+      console.error('Could not persist tokens (kept in memory):', error);
+    }
   }
 
   async getTokens(): Promise<LinkedInTokens | null> {
