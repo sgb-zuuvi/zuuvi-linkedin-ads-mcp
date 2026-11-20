@@ -33,3 +33,6 @@ npm-debug.log*
 # Test coverage
 coverage/
 zuuvi-google-ads-audit.md
+
+paperclip-config.json
+railway-setup.txt
