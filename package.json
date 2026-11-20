@@ -11,7 +11,7 @@
     "auth": "node dist/auth-cli.js",
     "dashboard": "tsc && node dist/scripts/generate-dashboard.js && open dashboard.html",
     "prepare": "tsc",
-    "start:http": "supergateway --stdio \"node dist/index.js\" --outputTransport streamableHttp --stateful --port ${PORT:-8000} --streamableHttpPath /mcp/${MCP_PATH_SECRET:?set MCP_PATH_SECRET} --healthEndpoint /healthz"
+    "start:http": "supergateway --stdio \"node dist/index.js\" --outputTransport streamableHttp --port ${PORT:-8000} --streamableHttpPath /mcp/${MCP_PATH_SECRET:?set MCP_PATH_SECRET} --healthEndpoint /healthz"
   },
   "keywords": [
     "mcp",
